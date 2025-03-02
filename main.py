@@ -7,47 +7,57 @@ from cocos.text import Label
 from cocos import scene
 from cocos.layer import Layer
 from cocos.director import director
+from cocos.director import director
+from cocos.menu import Menu, CENTER, MenuItem, shake, shake_back
+from cocos.scene import Scene
+from pyglet.app import exit
+from cocos.sprite import Sprite
+
+class Actors(Layer):
+    def __init__(self, width, height):
+        super(Actors, self).__init__()
+
+        self.width = width
+        self.height = height
+        # Here is where the code starts to get different
+        # Instead of text, I create a sprite object
+        # Also unlike last time, I added the sprite to the object instead of making it local
+        # This is useful if you want to access it in other functions, like I will show in the next tutorial
+        self.actor = Sprite('art/stefana.png')
+        self.background = Sprite('art/level1.png')
+        # Then I add it to the layer, similar to the text
+        self.actor.position = 320, 240
+
+        self.background.position = self.width//2, self.height//2
+        self.background.scale = 1.0
+
+        # And lastly I add it to the layer. Standard stuff
+        self.add(self.background)
+        self.add(self.actor)
+
 
 
 # This code is an explained version of the Hello World example from the Cocos2D Python documentation
 # We will be making a simple game that displays the text "Hello World!"
 
-# First we create a class that extends the Layer class from the Cocos library.
-# If you don't know what this is you should probably take an object oriented programming course first
-class HelloWorld(Layer):
-    # Each python class needs an __init__ function that is called when an object is instantiated
-    def __init__(self):
-        # First thing we do in the class is to initialize the parent class, Layer, which is why I called the super function in this case
-        super(HelloWorld, self).__init__()
-        # Then I make a Cocos Label object to display the text.
-        hello_world_label = Label(
-            "Hello World!",  # The first thing the Label class requires is a piece of text to display
-            font_name = "Times New Roman", # The next thing we need to input a font. Feel free to replace it with any font you like.
-            font_size = 32,  # The third input I give is a font size for the text
-            anchor_x = 'center',  # This input parameter tells cocos to anchor the text to the middle of the X axis
-            anchor_y = 'center'  # Similar to the input above, this parameter tells cocos to anchor the text to the middle of the Y axis
-        )
 
-        # Now I need to give the text its position.
-        hello_world_label.position = 320, 240
-
-        # Lastly I need to add the label to the layer
-        # self refers to the object, which in this case is the layer
-        self.add(hello_world_label)
 
 
 # From here the code is pretty typical for a Cocos2D application
 # First I need to initialize the cocos director
 # The director is the part of cocos that "directs" the scenes. Cocos is pretty partial to this type of film language
-director.init()
+director.init(fullscreen=True, width=1024, height=768)
 # Lastly I run the scene. This line of code is pretty long compared to the others, so I'll explain what each part does
 # To begin I call the director's run function, which allows it to run the scene by placing layers within
+# Next I create a Scene object that allows me to string the layers together. In this case I only have 1 layer
+main_scene = scene.Scene(
+    # And lastly I create the layer that we made above inside of the new scene
+    Actors(director.get_window_size()[0], director.get_window_size()[1])
+)
+# main_scene.anchor = 0, 0
+# main_scene.position = 0, 0
 director.run(
-    # Next I create a Scene object that allows me to string the layers together. In this case I only have 1 layer
-    scene.Scene(
-        # And lastly I create the layer that we made above inside of the new scene
-        HelloWorld()
-    )
+    main_scene
 )
 
 # That's it! Run it and see what happens
